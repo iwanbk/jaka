@@ -1,0 +1,12 @@
+language: go
+
+go:
+  - 1.11.x
+
+install:
+  - go get -v -t ./...
+  - go get -v github.com/rakyll/gotest
+
+script:
+  - go build ./...
+  - gotest -v -race ./...
