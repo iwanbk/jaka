@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	"encoding/binary"
 	"fmt"
 	"io"
 	"net"
@@ -93,8 +92,10 @@ func (s *Server) handle(ctx context.Context, conn net.Conn) {
 
 		// handle request
 		switch hdr.APIKey {
-		case metadataReq:
+		case metadataRequest:
 			err = s.handleMetadataReq(buf, rd)
+		case produceRequest:
+			err = s.handleProduceRequestV2(buf, rd)
 		default:
 			err = fmt.Errorf("unhandled api key : %v", hdr.APIKey)
 		}
@@ -188,44 +189,6 @@ func (s *Server) readRequest(ctx context.Context, rd io.Reader) (header, *bytes.
 		size, hdr.APIKey, hdr.APIVersion, hdr.CorrelationID, clientID)
 
 	return hdr, bBuf, nil
-}
-
-func binRead(r io.Reader, data interface{}) error {
-	return binary.Read(r, binary.BigEndian, data)
-}
-
-func binWrite(w io.Writer, data interface{}) error {
-	return binary.Write(w, binary.BigEndian, data)
-}
-
-// read kafka string from the given reader
-func readString(rd io.Reader) (string, error) {
-	var len int16
-
-	// read string len
-	err := binRead(rd, &len)
-	if err != nil {
-		return "", err
-	}
-
-	// read the string
-	buf := make([]byte, int(len))
-	err = binRead(rd, &buf)
-
-	return string(buf), err
-}
-
-// write kafka string to the given writer
-func writeString(w io.Writer, s string) error {
-	length := int16(len(s))
-	err := binWrite(w, length)
-	if err != nil {
-		return err
-	}
-
-	// TODO : real write all
-	_, err = io.Copy(w, bytes.NewBufferString(s))
-	return err
 }
 
 func parseHostPort(addr string) (string, int32, error) {

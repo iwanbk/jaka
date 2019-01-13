@@ -2,8 +2,7 @@ package server
 
 import (
 	"io"
-
-	log "github.com/sirupsen/logrus"
+	//log "github.com/sirupsen/logrus"
 )
 
 // handle MetadataRequest
@@ -40,7 +39,6 @@ func (s *Server) responMetadata(w io.Writer, topics []string) error {
 	}
 
 	// controller ID
-	log.Println("controllerID")
 	controllerID := int32(1)
 	err = binWrite(w, controllerID)
 	if err != nil {
@@ -58,7 +56,6 @@ func (s *Server) sendBrokers(w io.Writer) error {
 		return err
 	}
 
-	log.Println("send numBroker")
 	// numBroker
 	numBroker := int32(1)
 	err = binWrite(w, numBroker)
