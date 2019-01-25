@@ -18,12 +18,12 @@ type produceRequestV2 struct {
 
 type produceRequestV2Topic struct {
 	Topic string
-	Data  []produceRequestV2TopicData
+	Data  []produceRequestV2TopicData // read() guarantee us to have at least one data
 }
 
 type produceRequestV2TopicData struct {
 	Partition int32
-	RecordSet []recordSetItemV2
+	RecordSet []recordSetItemV2 // read guaranted us to have at least one record set
 }
 
 type recordSetItemV2 struct {

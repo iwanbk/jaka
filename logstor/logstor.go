@@ -1,5 +1,9 @@
 package logstor
 
+const (
+	MagicRecordBatch = 2
+)
+
 // RecordBatch  is the on-disk format of a RecordBatch.
 type RecordBatch struct {
 	Header  RecordBatchHeader
@@ -10,7 +14,7 @@ type RecordBatch struct {
 // It is not an official term in kafka.
 type RecordBatchHeader struct {
 	BaseOffset           int64
-	BatchLength          int32
+	BatchLength          int32 //? length after this field
 	PartitionLeaderEpoch int32
 	Magic                int8 // (current magic value is 2)
 
@@ -22,7 +26,7 @@ type RecordBatchHeader struct {
 	LastOffsetDelta int32
 	FirstTimestamp  int64
 	MaxTimestamp    int64
-	ProducerId      int64
+	ProducerID      int64
 	ProducerEpoch   int16
 	BaseSequence    int32
 }
@@ -54,4 +58,10 @@ type varint int64
 type ControlRecord struct {
 	Version int16 // (current version is 0)
 	Type    int16 // (0 indicates an abort marker, 1 indicates a commit)
+}
+
+func (rb *RecordBatch) Complete() {
+	rb.Header.BatchLength = 0  //? Length of message or number of batch record?
+	rb.Header.Crc = 0          //?count it!
+	rb.Header.BaseSequence = 0 //? need to check written log first?
 }
