@@ -1,7 +1,6 @@
 package server
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"fmt"
@@ -72,7 +71,8 @@ func (s *Server) ListenAddr() string {
 func (s *Server) handle(ctx context.Context, conn net.Conn) {
 	defer conn.Close()
 
-	bw := bufio.NewWriter(conn)
+	//bw := bufio.NewWriter(conn)
+	bw := conn
 
 	for {
 		log.Printf("-- waiting req")
@@ -92,6 +92,8 @@ func (s *Server) handle(ctx context.Context, conn net.Conn) {
 
 		// handle request
 		switch hdr.APIKey {
+		case apiVersions:
+			err = s.handleAPIVersionV0(buf)
 		case metadataRequest:
 			err = s.handleMetadataReq(buf, rd)
 		case produceRequest:
@@ -127,11 +129,11 @@ func (s *Server) handle(ctx context.Context, conn net.Conn) {
 		}
 
 		// flush the response
-		err = bw.Flush()
+		/*err = bw.Flush()
 		if err != nil {
 			log.Errorf("failed to flush repsponse: %v", err)
 			return
-		}
+		}*/
 	}
 }
 

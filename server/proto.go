@@ -16,6 +16,7 @@ const (
 	offsetFetchReq
 	groupCoordinatorReq
 	joinGroupReq
+	apiVersions = 18
 )
 
 func binRead(r io.Reader, data interface{}) error {
@@ -84,4 +85,8 @@ func readArrayLen(rd io.Reader) (int32, error) {
 	var len int32
 	err := binRead(rd, &len)
 	return len, err
+}
+
+func writeArrayLen(w io.Writer, length int) error {
+	return binWrite(w, int32(length))
 }

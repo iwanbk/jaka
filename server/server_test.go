@@ -10,10 +10,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestConnect(t *testing.T) {
+func TestSegmentWrite(t *testing.T) {
 	cfg := Config{
-		ListenAddr: "127.0.0.1:9092",
-		NodeID:     1,
+		//ListenAddr: "127.0.0.1:9092",
+		NodeID: 1,
 	}
 
 	// create server

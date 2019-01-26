@@ -4,6 +4,7 @@ import (
 	"io"
 )
 
+// topicMetadata version 1
 type topicMetadata struct {
 	TopicErrorCode int16
 	TopicName      string
